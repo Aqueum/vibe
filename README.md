@@ -46,9 +46,14 @@ The installer clones vibe to `~/.vibe-src`, symlinks `~/bin/vibe`, and prompts f
 - `vibe --rebuild` — force rebuild of the container image
 - `vibe --continue` — resume the most recent Claude conversation in this project
 - `vibe --resume <uuid>` — resume a specific past conversation
+- `vibe --model <id>` — launch this session on any Claude model id
 - `vibe learn --init` — one-time setup of the cross-org learning library
 
 Fresh conversation is the default — durable memory lives in `TODO.md`, `CLAUDE.md`, and Claude's auto-memory, not in resumed conversations (which accumulate compaction debt). `--continue` / `--resume` are opt-in for short-horizon pickup.
+
+### Model selection
+
+`--model <id>` applies per-launch; it does not change the default model Claude Code has persisted in its shared config volume. Set a standing default with `VIBE_MODEL="<id>"` in `~/.vibe/config` (flags win over config). Inside a session, `/model` still works as usual.
 
 ## Host-side state
 
@@ -56,7 +61,7 @@ Fresh conversation is the default — durable memory lives in `TODO.md`, `CLAUDE
 |---|---|
 | `~/bin/vibe` | Symlink to the launcher |
 | `~/.vibe-src/` | Clone of this repo |
-| `~/.vibe/config` | `VIBE_PROJECTS_DIR`, `VIBE_SSH_AUTO` (opt-in: `=1` skips the per-action SSH ask in all projects), `VIBE_BRAIN2_PATH` / `VIBE_ZOTERO_PATH` (shared brain2 at `/brain2` rw + Zotero at `/zotero` ro; default `~/brain2` / `~/Zotero/storage`, mounted into every container when the dir exists, `=off` to disable) |
+| `~/.vibe/config` | `VIBE_PROJECTS_DIR`, `VIBE_SSH_AUTO` (opt-in: `=1` skips the per-action SSH ask in all projects), `VIBE_BRAIN2_PATH` / `VIBE_ZOTERO_PATH` (shared brain2 at `/brain2` rw + Zotero at `/zotero` ro; default `~/brain2` / `~/Zotero/storage`, mounted into every container when the dir exists, `=off` to disable), `VIBE_MODEL` (default model id for every launch; flags win) |
 | `~/.vibe/tokens` | GitHub PATs (`owner/repo=ghp_...`); optional `ZOTERO_API_KEY=...` line (slash-free key → no collision with a repo entry) surfaced in-container as `$ZOTERO_API_KEY` for direct Zotero web-API calls. `chmod 600` — never commit or sync to the cloud |
 | `~/.vibe/skipped` | Projects opted out of GitHub |
 | `~/.vibe/learning.config` | Learning library location + visibility |
